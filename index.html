@@ -9,12 +9,13 @@
     </head>
 
     <body>
-        <h2>Dealer: <span id="dealer-sum"></span></h2>
+        <h1 class="headTitle">Blackjack</h1>
+        <h2 id="dealerSum">Dealer: <span id="dealer-sum"></span></h2>
         <div id="dealer-cards">
             <img id="hidden" src="./cards/BACK.png">
         </div>
 
-        <h2>You: <span id="your-sum"></span></h2>
+        <h2 id="yourSum">You: <span id="your-sum"></span></h2>
         <div id="your-cards"></div>
 
         <br>
@@ -24,15 +25,20 @@
         <p id="results"></p>
         <br>
         <!-- <button id="newGame" onclick="newGame()">New Game</button> -->
-        <p id="credits"></p>
-        <p id="currentBet">Current Bet: 0</p>
-        <button id="deal" onclick="deal()">Deal</button>
-        <div>
-            <button id='1bet' class="chip" onclick='increaseBet(this.id)'>1</button>
-            <button id="5bet" class="chip" onclick='increaseBet(this.id)'>5</button>
-            <button id="10bet" class="chip" onclick='increaseBet(this.id)'>10</button>
-            <button id="20bet" class="chip" onclick='increaseBet(this.id)'>20</button>
-            <button id="50bet" class="chip" onclick='increaseBet(this.id)'>50</button>
+        <div class="endScreen">
+            <p id="credits"></p>
+            <p id="winnings"></p>
+          </div>
+        <div class="bettingArea">
+            <p id="currentBet">Current Bet: 0</p>
+            <button id="deal" onclick="deal()">Deal</button>
+            <div id="betBtn">
+                <button id='1bet' class="chip" onclick='increaseBet(this.id)'>1</button>
+                <button id="5bet" class="chip" onclick='increaseBet(this.id)'>5</button>
+                <button id="10bet" class="chip" onclick='increaseBet(this.id)'>10</button>
+                <button id="20bet" class="chip" onclick='increaseBet(this.id)'>20</button>
+                <button id="50bet" class="chip" onclick='increaseBet(this.id)'>50</button>
+            </div>
         </div>
         <div>
             <p id ="credits"></p>

@@ -32,3 +32,49 @@ body {
     height: 50px;
     font-size: 20px;
 }
+
+#deal {
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    font-size: 20px;
+    background-color: green;
+    border-radius: 50%;
+}
+
+.hide {
+    visibility: hidden;
+}
+
+.bettingArea{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.chip {
+    border-radius: 50%;
+    padding-left: 5px;
+    height: 26px;
+    width: 26px;
+}
+
+/* #1bet {
+    background-color: blue;
+}
+
+#5bet {
+    background-color: yellowgreen;
+}
+
+#10bet {
+    background-color: violet;
+}
+
+#bet {
+    background-color: cadetblue;
+}
+
+#50bet {
+    background-color: grey;
+} */

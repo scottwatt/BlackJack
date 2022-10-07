@@ -17,6 +17,14 @@ window.onload = function () {
     buildDeck();
     shuffleDeck();
     // startGame();
+    document.getElementById("your-cards").innerHTML = '';
+    document.getElementById("dealer-cards").innerHTML = '';
+    document.getElementById("dealerSum").classList.add('hide');
+    document.getElementById("yourSum").classList.add('hide');
+    document.getElementById("stay").classList.add('hide');
+    document.getElementById("hit").classList.add('hide');
+    document.getElementById("double").classList.add('hide');
+
     document.getElementById('credits').innerHTML=`Credits: ${credit}`; 
 }
 
@@ -43,6 +51,10 @@ function shuffleDeck() {
 }
 
 function deal(){
+    if(currentBet == 0){
+        window.alert("Please enter a bet!");
+        return;
+    }
     document.getElementById("your-cards").innerHTML = '';
     yourSum = 0;
     document.getElementById("dealer-cards").innerHTML = '';
@@ -54,6 +66,7 @@ function deal(){
     document.getElementById('dealer-cards').appendChild(img);
     yourAceCount = 0;
     dealerAceCount = 0;
+    winnings = 0;
 
     document.getElementById("currentBet").innerHTML = `Current Bet: ${currentBet}`;
 
@@ -62,6 +75,17 @@ function deal(){
     canHit = true;
     canStay = true;
     canDouble = true;
+
+    document.getElementById("dealerSum").classList.remove('hide');
+    document.getElementById("yourSum").classList.remove('hide');
+    document.getElementById("stay").classList.remove('hide');
+    document.getElementById("hit").classList.remove('hide');
+    document.getElementById("double").classList.remove('hide');
+    document.getElementById("betBtn").classList.add('hide');
+    document.getElementById("deal").classList.add('hide');
+    document.getElementById("winnings").classList.add('hide');
+
+    
 
 
 
@@ -117,6 +141,11 @@ function startGame() {
         message = "Push!"
         document.getElementById("hidden").src = "./cards/" + hidden + ".png"
         document.getElementById("dealer-sum").innerText = dealerSum;
+        moneyBack();
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
+          
         canHit = false;
         canStay = false;
         canDouble = false;
@@ -127,6 +156,11 @@ function startGame() {
         message = "Blackjack! You lose"
         document.getElementById("hidden").src = "./cards/" + hidden + ".png";
         document.getElementById("dealer-sum").innerText = dealerSum;
+
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
+
         canHit = false;
         canStay = false;
         canDouble = false;
@@ -135,6 +169,11 @@ function startGame() {
         message = 'Blackjack! You win!'
         document.getElementById("hidden").src = "./cards/" + hidden + ".png";
         document.getElementById("dealer-sum").innerText = dealerSum;
+        blackjackWin();
+
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
 
 
         canHit = false;
@@ -156,6 +195,7 @@ function hit() {
         return;
     }
 
+    canDouble = false;
     let cardImg = document.createElement("img");
     let card = deck.pop();
     cardImg.src = "./cards/" + card + ".png";
@@ -177,7 +217,9 @@ function hit() {
         document.getElementById("results").innerText = "Busted!";
         document.getElementById("hidden").src = "./cards/" + hidden + ".png";
         document.getElementById("dealer-sum").innerText = dealerSum;
-
+        setTimeout(() => {
+        newGame();
+      }, 3000);  
 
 
     }
@@ -222,14 +264,32 @@ function stay() {
     let message = "";
     if (yourSum > 21) {
         message = "You Lose!";
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (dealerSum > 21) {
         message = "You win!";
+        regularWin();
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (yourSum == dealerSum) {
         message = "Push!";
+        moneyBack();
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (yourSum > dealerSum) {
         message = "You Win!";
+        regularWin();
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (yourSum < dealerSum) {
         message = "You Lose!";
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     }
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
@@ -239,7 +299,10 @@ function stay() {
 function double(){
     if (!canDouble) {
         return;
+    }else if(credit < currentBet * 2){
+        return;
     }
+    credit -= currentBet;
     let cardImg = document.createElement("img");
     let card = deck.pop();
     cardImg.src = "./cards/" + card + ".png";
@@ -250,7 +313,7 @@ function double(){
     document.getElementById("your-cards").append(cardImg);
     document.getElementById("your-sum").innerText = reduceAce(yourSum, yourAceCount);
     document.getElementById("dealer-sum").innerText = dealerSum - getValue(hidden);
-    
+    document.getElementById("credits").innerHTML = `Credits: ${credit}`
     if (reduceAce(yourSum, yourAceCount) > 21) {
         canHit = false;
         canStay = false;
@@ -260,6 +323,17 @@ function double(){
 
 
 
+
+    }
+   
+    while (dealerSum < 17) {
+        let cardImg = document.createElement("img");
+        let card = deck.pop();
+        cardImg.src = "./cards/" + card + ".png";
+        dealerSum += getValue(card);
+        dealerAceCount += checkAce(card);
+        document.getElementById("dealer-cards").append(cardImg);
+        document.getElementById("dealer-sum").innerText = dealerSum;
 
     }
 
@@ -274,14 +348,32 @@ function double(){
     let message = "";
     if (yourSum > 21) {
         message = "You Lose!";
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (dealerSum > 21) {
         message = "You win!";
+        doubleWin();
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (yourSum == dealerSum) {
         message = "Push!";
+        regularWin()
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (yourSum > dealerSum) {
         message = "You Win!";
+        doubleWin();
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     } else if (yourSum < dealerSum) {
         message = "You Lose!";
+        setTimeout(() => {
+            newGame();
+          }, 3000); 
     }
 
     document.getElementById("dealer-sum").innerText = dealerSum;
@@ -323,6 +415,27 @@ function showCredits(){
     document.getElementById('credits').innerHTML= `Credits: ${credit}`;
 }
 
+function regularWin(){
+    winnings = currentBet * 2;
+    credit += winnings;
+}
+
+function blackjackWin(){
+    winnings = currentBet * 2.5;
+    credit += winnings;
+}
+
+function doubleWin(){
+    winnings = currentBet * 4;
+    credit += winnings;
+}
+
+function moneyBack(){
+    winnings = currentBet;
+    credit += winnings;
+}
+
+
 function increaseBet(id) {
     var betAmount = parseInt(id, 10)
     if(betAmount + currentBet <= credit){
@@ -330,52 +443,40 @@ function increaseBet(id) {
     }else if(betAmount + currentBet > credit){
         currentBet = credit;
     }
-    // switch (id) {
-    //     case 'one':
-    //         currentBet += 1;
-    //         credit -= 1;
-    //         break;
-    //     case 'five':
-    //         currentBet += 5;
-    //         credit -= 5;
-    //         break;
-    //     case 'ten':
-    //         currentBet += 10;
-    //         credit -= 10;
-    //         break;
-    //     case 'twenty':
-    //         currentBet += 20;
-    //         credit -= 20;
-    //         break;
-    //     case 'fifty':
-    //         currentBet += 50;
-    //         credit -= 50;
-    //         break;
-    //     default:
-    //         break;
-    // }
     document.getElementById("currentBet").innerHTML =`Current Bet: ${currentBet}`
 }
 
 
-// function newGame() {
-//     console.log(document.getElementById("your-cards"))
+function newGame() {
+    document.getElementById("your-cards").innerHTML = '';
+    document.getElementById("dealer-cards").innerHTML = '';
+    document.getElementById("dealerSum").classList.add('hide');
+    document.getElementById("yourSum").classList.add('hide');
+    document.getElementById("stay").classList.add('hide');
+    document.getElementById("hit").classList.add('hide');
+    document.getElementById("double").classList.add('hide');
 
-//     // console.log(document.getElementById("your-cards").removeChild(document.getElementById("your-cards").))  
-//     // document.getElementById("dealer-cards").removeChild().lastElementalChild;
-//     document.getElementById("your-cards").innerHTML = '';
-//     yourSum = 0;
-//     document.getElementById("dealer-cards").innerHTML = '';
-//     dealerSum = 0;
+    document.getElementById("betBtn").classList.remove('hide');
+    document.getElementById("deal").classList.remove('hide');
+    document.getElementById("winnings").classList.remove('hide');
 
-//     var img = document.createElement('img');
-//     img.setAttribute('id', 'hidden');
-//     img.src = "./cards/BACK.png"
-//     document.getElementById('dealer-cards').appendChild(img);
-//     yourAceCount = 0;
-//     dealerAceCount = 0;
+    document.getElementById("winnings").innerHTML=`Won: ${winnings}`
 
-//     currentBet = 0;
+    document.getElementById("credits").innerHTML=`Credits: ${credit}`
+    document.getElementById("currentBet").innerHTML=`Current Bet: 0`
+
+
+
+    // dealerSum = 0;
+
+    // var img = document.createElement('img');
+    // img.setAttribute('id', 'hidden');
+    // img.src = "./cards/BACK.png"
+    // document.getElementById('dealer-cards').appendChild(img);
+    // yourAceCount = 0;
+    // dealerAceCount = 0;
+
+    currentBet = 0;
 //     document.getElementById("currentBet").innerHTML = `Current Bet: ${currentBet}`;
 
 
@@ -392,4 +493,4 @@ function increaseBet(id) {
 //     shuffleDeck();
 
 //     startGame();
-// }
+}
