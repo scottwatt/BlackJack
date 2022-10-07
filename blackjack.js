@@ -9,13 +9,15 @@ var credit = 100;
 var hidden;
 var deck;
 
+var canDouble = true;
 var canHit = true;
 var canStay = true;
 
 window.onload = function () {
     buildDeck();
     shuffleDeck();
-    startGame();
+    // startGame();
+    document.getElementById('credits').innerHTML=`Credits: ${credit}`; 
 }
 
 function buildDeck() {
@@ -38,6 +40,36 @@ function shuffleDeck() {
         deck[j] = temp;
     }
     console.log(deck);
+}
+
+function deal(){
+    document.getElementById("your-cards").innerHTML = '';
+    yourSum = 0;
+    document.getElementById("dealer-cards").innerHTML = '';
+    dealerSum = 0;
+
+    var img = document.createElement('img');
+    img.setAttribute('id', 'hidden');
+    img.src = "./cards/BACK.png"
+    document.getElementById('dealer-cards').appendChild(img);
+    yourAceCount = 0;
+    dealerAceCount = 0;
+
+    document.getElementById("currentBet").innerHTML = `Current Bet: ${currentBet}`;
+
+
+    console.log(document.getElementById("dealer-cards"))
+    canHit = true;
+    canStay = true;
+    canDouble = true;
+
+
+
+
+    showCredits();
+    buildDeck();
+    shuffleDeck();
+    startGame();
 }
 
 function startGame() {
@@ -81,12 +113,13 @@ function startGame() {
 
     }
     message = '';
-    if (yourSum == 21) {
-        message = "Blackjack! You win"
+    if (yourSum == 21 && dealerSum == 21) {
+        message = "Push!"
         document.getElementById("hidden").src = "./cards/" + hidden + ".png"
         document.getElementById("dealer-sum").innerText = dealerSum;
         canHit = false;
         canStay = false;
+        canDouble = false;
 
 
 
@@ -94,17 +127,19 @@ function startGame() {
         message = "Blackjack! You lose"
         document.getElementById("hidden").src = "./cards/" + hidden + ".png";
         document.getElementById("dealer-sum").innerText = dealerSum;
-
         canHit = false;
         canStay = false;
+        canDouble = false;
 
-    } else if (dealerSum == 21 && yourSum == 21) {
-        message = 'Tie!'
+    } else if (yourSum == 21) {
+        message = 'Blackjack! You win!'
         document.getElementById("hidden").src = "./cards/" + hidden + ".png";
         document.getElementById("dealer-sum").innerText = dealerSum;
 
+
         canHit = false;
         canStay = false;
+        canDouble = false;
 
     }
 
@@ -113,6 +148,7 @@ function startGame() {
     console.log(yourSum);
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stay").addEventListener("click", stay);
+    document.getElementById("double").addEventListener("click", double);
 }
 
 function hit() {
@@ -137,10 +173,10 @@ function hit() {
     if (reduceAce(yourSum, yourAceCount) > 21) {
         canHit = false;
         canStay = false;
+        canDouble = false;
         document.getElementById("results").innerText = "Busted!";
         document.getElementById("hidden").src = "./cards/" + hidden + ".png";
         document.getElementById("dealer-sum").innerText = dealerSum;
-
 
 
 
@@ -179,6 +215,7 @@ function stay() {
     dealerSum = reduceAce(dealerSum, dealerAceCount);
     yourSum = reduceAce(yourSum, yourAceCount);
 
+    canDouble = false;
     canHit = false;
     document.getElementById("hidden").src = "./cards/" + hidden + ".png";
 
@@ -188,7 +225,59 @@ function stay() {
     } else if (dealerSum > 21) {
         message = "You win!";
     } else if (yourSum == dealerSum) {
-        message = "Tie!";
+        message = "Push!";
+    } else if (yourSum > dealerSum) {
+        message = "You Win!";
+    } else if (yourSum < dealerSum) {
+        message = "You Lose!";
+    }
+    document.getElementById("dealer-sum").innerText = dealerSum;
+    document.getElementById("your-sum").innerText = yourSum;
+    document.getElementById("results").innerText = message;
+}
+
+function double(){
+    if (!canDouble) {
+        return;
+    }
+    let cardImg = document.createElement("img");
+    let card = deck.pop();
+    cardImg.src = "./cards/" + card + ".png";
+    yourAceCount += checkAce(card);
+    yourSum += getValue(card)
+    dealerAceCount += checkAce(card);
+    dealerSum = reduceAce(dealerSum, dealerAceCount);
+    document.getElementById("your-cards").append(cardImg);
+    document.getElementById("your-sum").innerText = reduceAce(yourSum, yourAceCount);
+    document.getElementById("dealer-sum").innerText = dealerSum - getValue(hidden);
+    
+    if (reduceAce(yourSum, yourAceCount) > 21) {
+        canHit = false;
+        canStay = false;
+        document.getElementById("results").innerText = "Busted!";
+        document.getElementById("hidden").src = "./cards/" + hidden + ".png";
+        document.getElementById("dealer-sum").innerText = dealerSum;
+
+
+
+
+    }
+
+    dealerSum = reduceAce(dealerSum, dealerAceCount);
+    yourSum = reduceAce(yourSum, yourAceCount);
+
+    canDouble = false;
+    canHit = false;
+    canStay = false;
+    document.getElementById("hidden").src = "./cards/" + hidden + ".png";
+
+    let message = "";
+    if (yourSum > 21) {
+        message = "You Lose!";
+    } else if (dealerSum > 21) {
+        message = "You win!";
+    } else if (yourSum == dealerSum) {
+        message = "Push!";
     } else if (yourSum > dealerSum) {
         message = "You Win!";
     } else if (yourSum < dealerSum) {
@@ -229,38 +318,78 @@ function reduceAce(yourSum, yourAceCount) {
     return yourSum;
 }
 
-
-
-
-
-function newGame() {
-    console.log(document.getElementById("your-cards"))
-
-    // console.log(document.getElementById("your-cards").removeChild(document.getElementById("your-cards").))  
-    // document.getElementById("dealer-cards").removeChild().lastElementalChild;
-    document.getElementById("your-cards").innerHTML = '';
-    yourSum = 0;
-    document.getElementById("dealer-cards").innerHTML = '';
-    dealerSum = 0;
-
-    var img = document.createElement('img');
-    img.setAttribute('id', 'hidden');
-    img.src = "./cards/BACK.png"
-    document.getElementById('dealer-cards').appendChild(img);
-    yourAceCount = 0;
-    dealerAceCount = 0;
-
-
-    console.log(document.getElementById("dealer-cards"))
-    canHit = true;
-    canStay = true;
-
-
-
-
-
-    buildDeck();
-    shuffleDeck();
-
-    startGame();
+function showCredits(){
+    credit -= currentBet;
+    document.getElementById('credits').innerHTML= `Credits: ${credit}`;
 }
+
+function increaseBet(id) {
+    var betAmount = parseInt(id, 10)
+    if(betAmount + currentBet <= credit){
+        currentBet += betAmount;
+    }else if(betAmount + currentBet > credit){
+        currentBet = credit;
+    }
+    // switch (id) {
+    //     case 'one':
+    //         currentBet += 1;
+    //         credit -= 1;
+    //         break;
+    //     case 'five':
+    //         currentBet += 5;
+    //         credit -= 5;
+    //         break;
+    //     case 'ten':
+    //         currentBet += 10;
+    //         credit -= 10;
+    //         break;
+    //     case 'twenty':
+    //         currentBet += 20;
+    //         credit -= 20;
+    //         break;
+    //     case 'fifty':
+    //         currentBet += 50;
+    //         credit -= 50;
+    //         break;
+    //     default:
+    //         break;
+    // }
+    document.getElementById("currentBet").innerHTML =`Current Bet: ${currentBet}`
+}
+
+
+// function newGame() {
+//     console.log(document.getElementById("your-cards"))
+
+//     // console.log(document.getElementById("your-cards").removeChild(document.getElementById("your-cards").))  
+//     // document.getElementById("dealer-cards").removeChild().lastElementalChild;
+//     document.getElementById("your-cards").innerHTML = '';
+//     yourSum = 0;
+//     document.getElementById("dealer-cards").innerHTML = '';
+//     dealerSum = 0;
+
+//     var img = document.createElement('img');
+//     img.setAttribute('id', 'hidden');
+//     img.src = "./cards/BACK.png"
+//     document.getElementById('dealer-cards').appendChild(img);
+//     yourAceCount = 0;
+//     dealerAceCount = 0;
+
+//     currentBet = 0;
+//     document.getElementById("currentBet").innerHTML = `Current Bet: ${currentBet}`;
+
+
+//     console.log(document.getElementById("dealer-cards"))
+//     canHit = true;
+//     canStay = true;
+//     canDouble = true;
+
+
+
+
+
+//     buildDeck();
+//     shuffleDeck();
+
+//     startGame();
+// }

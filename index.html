@@ -20,16 +20,19 @@
         <br>
         <button id="hit">Hit</button>
         <button id="stay">Stay</button>
+        <button id="double">Double</button>
         <p id="results"></p>
         <br>
-        <button id="newGame" onclick="newGame()">New Game</button>
-        <p id="currentBet"> :D</p>
+        <!-- <button id="newGame" onclick="newGame()">New Game</button> -->
+        <p id="credits"></p>
+        <p id="currentBet">Current Bet: 0</p>
+        <button id="deal" onclick="deal()">Deal</button>
         <div>
-            <button id='one' class="chip">1</button>
-            <button id="five" class="chip">5</button>
-            <button id="ten" class="chip">10</button>
-            <button id="twenty" class="chip">20</button>
-            <button id="fifty" class="chip">50</button>
+            <button id='1bet' class="chip" onclick='increaseBet(this.id)'>1</button>
+            <button id="5bet" class="chip" onclick='increaseBet(this.id)'>5</button>
+            <button id="10bet" class="chip" onclick='increaseBet(this.id)'>10</button>
+            <button id="20bet" class="chip" onclick='increaseBet(this.id)'>20</button>
+            <button id="50bet" class="chip" onclick='increaseBet(this.id)'>50</button>
         </div>
         <div>
             <p id ="credits"></p>
