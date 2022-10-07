@@ -194,8 +194,8 @@ function hit() {
     if (!canHit) {
         return;
     }
-
     canDouble = false;
+
     let cardImg = document.createElement("img");
     let card = deck.pop();
     cardImg.src = "./cards/" + card + ".png";
@@ -251,10 +251,10 @@ function stay() {
         dealerAceCount += checkAce(card);
         document.getElementById("dealer-cards").append(cardImg);
         document.getElementById("dealer-sum").innerText = dealerSum;
-
+        
     }
-
     dealerSum = reduceAce(dealerSum, dealerAceCount);
+
     yourSum = reduceAce(yourSum, yourAceCount);
 
     canDouble = false;
@@ -298,8 +298,10 @@ function stay() {
 
 function double(){
     if (!canDouble) {
+        window.alert("Cant double after hitting")
         return;
     }else if(credit < currentBet * 2){
+        window.alert("Not enough credits!")
         return;
     }
     credit -= currentBet;
